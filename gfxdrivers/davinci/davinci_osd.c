@@ -600,7 +600,10 @@ osdFlipRegion( CoreLayer             *layer,
                void                  *region_data,
                CoreSurface           *surface,
                DFBSurfaceFlipFlags    flags,
-               CoreSurfaceBufferLock *lock )
+               const DFBRegion * left_update,
+               CoreSurfaceBufferLock * left_lock,
+               const DFBRegion * right_update,
+               CoreSurfaceBufferLock * right_lock )
 {
      CoreSurfaceBuffer   *buffer;
      DavinciDriverData   *ddrv = driver_data;
@@ -610,21 +613,21 @@ osdFlipRegion( CoreLayer             *layer,
      D_DEBUG_AT( Davinci_OSD, "%s()\n", __FUNCTION__ );
 
      D_ASSERT( surface != NULL );
-     D_ASSERT( lock != NULL );
+     D_ASSERT( left_lock != NULL );
      D_ASSERT( ddrv != NULL );
      D_ASSERT( ddev != NULL );
 
-     buffer = lock->buffer;
+     buffer = left_lock->buffer;
      D_ASSERT( buffer != NULL );
 
      if (buffer->format != DSPF_RGB16) {
           if (DFB_PIXELFORMAT_HAS_ALPHA( buffer->format ))
-               update_buffers( ddrv, ddev, surface, lock, NULL );
+               update_buffers( ddrv, ddev, surface, left_lock, NULL );
           else
-               update_rgb( ddrv, ddev, surface, lock, NULL );
+               update_rgb( ddrv, ddev, surface, left_lock, NULL );
      }
      else
-          davincifb_pan_display( &ddrv->fb[OSD0], &dosd->var0, lock, flags, 0, 0 );
+          davincifb_pan_display( &ddrv->fb[OSD0], &dosd->var0, left_lock, flags, 0, 0 );
 
      dfb_surface_flip( surface, false );
 
@@ -639,8 +642,10 @@ osdUpdateRegion( CoreLayer             *layer,
                  void                  *layer_data,
                  void                  *region_data,
                  CoreSurface           *surface,
-                 const DFBRegion       *update,
-                 CoreSurfaceBufferLock *lock )
+                 const DFBRegion * left_update,
+                 CoreSurfaceBufferLock * left_lock,
+                 const DFBRegion * right_update,
+                 CoreSurfaceBufferLock * right_lock )
 {
      CoreSurfaceBuffer   *buffer;
      DavinciDriverData   *ddrv = driver_data;
@@ -650,18 +655,18 @@ osdUpdateRegion( CoreLayer             *layer,
      D_DEBUG_AT( Davinci_OSD, "%s()\n", __FUNCTION__ );
 
      D_ASSERT( surface != NULL );
-     D_ASSERT( lock != NULL );
+     D_ASSERT( left_lock != NULL );
      D_ASSERT( ddrv != NULL );
      D_ASSERT( ddev != NULL );
 
-     buffer = lock->buffer;
+     buffer = left_lock->buffer;
      D_ASSERT( buffer != NULL );
 
      if (buffer->format != DSPF_RGB16) {
           if (DFB_PIXELFORMAT_HAS_ALPHA( buffer->format ))
-               update_buffers( ddrv, ddev, surface, lock, update );
+               update_buffers( ddrv, ddev, surface, left_lock, left_update );
           else
-               update_rgb( ddrv, ddev, surface, lock, update );
+               update_rgb( ddrv, ddev, surface, left_lock, left_update );
      }
 
      enable_osd( ddrv, dosd );

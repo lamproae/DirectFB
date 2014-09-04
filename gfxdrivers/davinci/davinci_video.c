@@ -343,21 +343,24 @@ videoFlipRegion( CoreLayer             *layer,
                  void                  *region_data,
                  CoreSurface           *surface,
                  DFBSurfaceFlipFlags    flags,
-                 CoreSurfaceBufferLock *lock )
+                 const DFBRegion * left_update,
+                 CoreSurfaceBufferLock * left_lock,
+                 const DFBRegion * right_update,
+                 CoreSurfaceBufferLock * right_lock )
 {
      DFBResult              ret;
      DavinciDriverData     *ddrv = driver_data;
      DavinciVideoLayerData *dvid = layer_data;
 
      D_ASSERT( surface != NULL );
-     D_ASSERT( lock != NULL );
+     D_ASSERT( left_lock != NULL );
      D_ASSERT( ddrv != NULL );
      D_ASSERT( dvid != NULL );
 
      D_DEBUG_AT( Davinci_Video, "%s( 0x%08lx [%d] 0x%04x [%4dx%4d] )\n", __FUNCTION__,
-                 lock->phys, lock->pitch, flags, dvid->config.width, dvid->config.height );
+                 left_lock->phys, left_lock->pitch, flags, dvid->config.width, dvid->config.height );
 
-     ret = ShowBuffer( ddrv, dvid, lock, NULL, flags );
+     ret = ShowBuffer( ddrv, dvid, left_lock, NULL, flags );
      if (ret)
           return ret;
 
@@ -372,22 +375,24 @@ videoUpdateRegion( CoreLayer             *layer,
                    void                  *layer_data,
                    void                  *region_data,
                    CoreSurface           *surface,
-                   const DFBRegion       *update,
-                   CoreSurfaceBufferLock *lock )
+                   const DFBRegion * left_update,
+                   CoreSurfaceBufferLock * left_lock,
+                   const DFBRegion * right_update,
+                   CoreSurfaceBufferLock * right_lock )
 {
      DavinciDriverData     *ddrv = driver_data;
      DavinciVideoLayerData *dvid = layer_data;
 
      D_ASSERT( surface != NULL );
-     D_ASSERT( lock != NULL );
+     D_ASSERT( left_lock != NULL );
      D_ASSERT( ddrv != NULL );
      D_ASSERT( dvid != NULL );
 
-     if (update) {
-          DFBRectangle area = DFB_RECTANGLE_INIT_FROM_REGION( update );
+     if (left_update) {
+          DFBRectangle area = DFB_RECTANGLE_INIT_FROM_REGION( left_update );
 
           D_DEBUG_AT( Davinci_Video, "%s( 0x%08lx [%d], %4d,%4d-%4dx%4d )\n", __FUNCTION__,
-                      lock->phys, lock->pitch, DFB_RECTANGLE_VALS( &area ) );
+                      left_lock->phys, left_lock->pitch, DFB_RECTANGLE_VALS( &area ) );
 
           if (!dfb_rectangle_intersect( &area, &dvid->config.source )) {
                D_DEBUG_AT( Davinci_Video, "  -> NO INTERSECTION with %4d,%4d-%4dx%4d\n",
@@ -397,13 +402,13 @@ videoUpdateRegion( CoreLayer             *layer,
           }
 
           if (!DFB_RECTANGLE_EQUAL( area, dvid->config.source ))
-               return ShowBuffer( ddrv, dvid, lock, &area, DSFLIP_NONE );
+               return ShowBuffer( ddrv, dvid, left_lock, &area, DSFLIP_NONE );
      }
      else
           D_DEBUG_AT( Davinci_Video, "%s( 0x%08lx [%d], %4dx%4d )\n", __FUNCTION__,
-                      lock->phys, lock->pitch, dvid->config.width, dvid->config.height );
+                      left_lock->phys, left_lock->pitch, dvid->config.width, dvid->config.height );
 
-     return ShowBuffer( ddrv, dvid, lock, NULL, DSFLIP_NONE );
+     return ShowBuffer( ddrv, dvid, left_lock, NULL, DSFLIP_NONE );
 }
 
 const DisplayLayerFuncs davinciVideoLayerFuncs = {
