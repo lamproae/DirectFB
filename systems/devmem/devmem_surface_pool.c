@@ -144,7 +144,7 @@ devmemInitPool( CoreDFB                    *core,
      ret_desc->access[CSAID_LAYER14] = CSAF_READ;
      ret_desc->access[CSAID_LAYER15] = CSAF_READ;
 
-     snprintf( ret_desc->name, DFB_SURFACE_POOL_DESC_NAME_LENGTH, "/dev/mem" );
+     snprintf( ret_desc->name, DFB_SURFACE_POOL_DESC_NAME_LENGTH, DEV_MEM );
 
      local->core = core;
      local->mem  = devmem->mem;
