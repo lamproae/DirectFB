@@ -156,6 +156,12 @@ else
 EP9X_DIR =
 endif
 
+if GFX_LXC
+LXC_DIR = lxc
+else
+LXC_DIR =
+endif
+
 
 SUBDIRS = \
 	$(ATI128_DIR)	\
@@ -168,6 +174,7 @@ SUBDIRS = \
 	$(GLES2_DIR)	\
 	$(I810_DIR)	\
 	$(I830_DIR)	\
+	$(LXC_DIR)	\
 	$(MACH64_DIR)	\
 	$(MATROX_DIR)	\
 	$(NEOMAGIC_DIR)	\

@@ -1996,6 +1996,7 @@ gles2=no
 glx=no
 i810=no
 i830=no
+lxc=no
 mach64=no
 matrox=no
 neomagic=no
@@ -2022,7 +2023,7 @@ AC_ARG_WITH(gfxdrivers,
                            [LIST is a comma separated selection of gfxdrivers]
                            [to build. Possible gfxdrivers are: all (builds most]
                            [drivers), none (builds none), ati128, cle266,]
-                           [cyber5k, davinci, ep9x, gp2d, gl, gles2, i810, i830, mach64,]
+                           [cyber5k, davinci, ep9x, gp2d, gl, gles2, i810, i830, lxc, mach64,]
                            [matrox, neomagic, nsc, nvidia, omap, pvr2d, pxa3xx,]
                            [radeon, savage, sh772x, sis315, tdfx, unichrome,]
                            [vdpau, vmware. @<:@default=all@:>@]),
@@ -2038,6 +2039,7 @@ if test "$gfxdrivers" = "all"; then
   checkfor_gles2=yes
   checkfor_i810=yes
   checkfor_i830=yes
+  checkfor_lxc=yes
   checkfor_mach64=yes
   checkfor_matrox=yes
   checkfor_neomagic=yes
@@ -2091,6 +2093,9 @@ else
                   ;;
           i830)
                   checkfor_i830=yes
+                  ;;
+          lxc)
+                  checkfor_lxc=yes
                   ;;
           mach64)
                   checkfor_mach64=yes
@@ -2216,6 +2221,10 @@ fi
 
 if test "$checkfor_i830" = "yes" && test "$have_sysio" = "yes"; then
   i830=yes
+fi
+
+if test "$checkfor_lxc" = "yes"; then
+  lxc=yes
 fi
 
 if test "$checkfor_mach64" = "yes"; then
@@ -2753,6 +2762,7 @@ AM_CONDITIONAL(GFX_GLES2, test "$gles2" = "yes")
 AM_CONDITIONAL(GFX_GLX, test "$glx" = "yes")
 AM_CONDITIONAL(GFX_I810, test "$i810" = "yes")
 AM_CONDITIONAL(GFX_I830, test "$i830" = "yes")
+AM_CONDITIONAL(GFX_LXC, test "$lxc" = "yes")
 AM_CONDITIONAL(GFX_MACH64, test "$mach64" = "yes")
 AM_CONDITIONAL(GFX_MATROX, test "$matrox" = "yes")
 AM_CONDITIONAL(GFX_NEOMAGIC, test "$neomagic" = "yes")
@@ -3023,6 +3033,7 @@ gfxdrivers/gl/Makefile
 gfxdrivers/gles2/Makefile
 gfxdrivers/i810/Makefile
 gfxdrivers/i830/Makefile
+gfxdrivers/lxc/Makefile
 gfxdrivers/mach64/Makefile
 gfxdrivers/matrox/Makefile
 gfxdrivers/neomagic/Makefile
@@ -3243,6 +3254,7 @@ Building Graphics Drivers:
   Cirrus EP9X               $ep9x
   Intel i810                $i810
   Intel i830                $i830
+  LinuX Container           $lxc
   Matrox                    $matrox
   NeoMagic                  $neomagic
   NSC Geode                 $nsc
