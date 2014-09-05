@@ -408,7 +408,8 @@ crtc2SetRegion( CoreLayer                  *layer,
                 CoreLayerRegionConfigFlags  updated,
                 CoreSurface                *surface,
                 CorePalette                *palette,
-                CoreSurfaceBufferLock      *lock )
+                CoreSurfaceBufferLock      *left_lock,
+                CoreSurfaceBufferLock      *right_lock )
 {
      RadeonDriverData     *rdrv   = (RadeonDriverData*) driver_data;
      RadeonCrtc2LayerData *rcrtc2 = (RadeonCrtc2LayerData*) layer_data;
@@ -420,7 +421,7 @@ crtc2SetRegion( CoreLayer                  *layer,
                 CLRCF_FORMAT | CLRCF_SURFACE | CLRCF_PALETTE;
                 
      if (updated & ~CLRCF_PALETTE) {
-          if (!crtc2_calc_regs( rdrv, rcrtc2, &rcrtc2->config, surface, lock ))
+          if (!crtc2_calc_regs( rdrv, rcrtc2, &rcrtc2->config, surface, left_lock ))
                return DFB_UNSUPPORTED;
           
           crtc2_set_regs( rdrv, rcrtc2 );
@@ -465,19 +466,23 @@ crtc2FlipRegion( CoreLayer             *layer,
                  void                  *region_data,
                  CoreSurface           *surface,
                  DFBSurfaceFlipFlags    flags,
-                 CoreSurfaceBufferLock *lock )
+                 const DFBRegion       *left_update,
+                 CoreSurfaceBufferLock *left_lock,
+                 const DFBRegion       *right_update,
+                 CoreSurfaceBufferLock *right_lock )
+
 {
      RadeonDriverData     *rdrv   = (RadeonDriverData*) driver_data;
      RadeonDeviceData     *rdev   = rdrv->device_data;
      RadeonCrtc2LayerData *rcrtc2 = (RadeonCrtc2LayerData*) layer_data;
      volatile u8          *mmio   = rdrv->mmio_base;
      
-     if (lock->phys - lock->offset == rdev->fb_phys)
+     if (left_lock->phys - left_lock->offset == rdev->fb_phys)
           rcrtc2->regs.rCRTC2_BASE_ADDR = rdev->fb_offset;
      else
           rcrtc2->regs.rCRTC2_BASE_ADDR = rdev->agp_offset;
      
-     rcrtc2->regs.rCRTC2_OFFSET = lock->offset;
+     rcrtc2->regs.rCRTC2_OFFSET = left_lock->offset;
      
      radeon_waitidle( rdrv, rdrv->device_data );
      

@@ -304,7 +304,8 @@ ovlSetRegion( CoreLayer                  *layer,
               CoreLayerRegionConfigFlags  updated,
               CoreSurface                *surface,
               CorePalette                *palette,
-              CoreSurfaceBufferLock      *lock )
+              CoreSurfaceBufferLock      *left_lock,
+              CoreSurfaceBufferLock      *right_lock )
 {
      RadeonDriverData       *rdrv = (RadeonDriverData*) driver_data;
      RadeonOverlayLayerData *rovl = (RadeonOverlayLayerData*) layer_data;
@@ -317,14 +318,14 @@ ovlSetRegion( CoreLayer                  *layer,
      if (updated & (CLRCF_WIDTH  | CLRCF_HEIGHT | CLRCF_FORMAT  |
                     CLRCF_SOURCE | CLRCF_DEST   | CLRCF_OPTIONS | CLRCF_OPACITY)) 
      {
-          ovl_calc_regs( rdrv, rovl, surface, &rovl->config, lock );
+          ovl_calc_regs( rdrv, rovl, surface, &rovl->config, left_lock );
           ovl_set_regs( rdrv, rovl );
      }
      
      if (updated & (CLRCF_SRCKEY | CLRCF_DSTKEY))
           ovl_set_colorkey( rdrv, rovl, &rovl->config );
 
-     rovl->lock = lock;
+     rovl->lock = left_lock;
 
      return DFB_OK;
 }
@@ -336,20 +337,23 @@ ovlFlipRegion( CoreLayer             *layer,
                void                  *region_data,
                CoreSurface           *surface,
                DFBSurfaceFlipFlags    flags,
-               CoreSurfaceBufferLock *lock )
+               const DFBRegion       *left_update,
+               CoreSurfaceBufferLock *left_lock,
+               const DFBRegion       *right_update,
+               CoreSurfaceBufferLock *right_lock )
 {
      RadeonDriverData       *rdrv = (RadeonDriverData*) driver_data;
      RadeonOverlayLayerData *rovl = (RadeonOverlayLayerData*) layer_data;
 
      dfb_surface_flip( surface, false );
       
-     ovl_calc_buffers( rdrv, rovl, surface, &rovl->config, lock );
+     ovl_calc_buffers( rdrv, rovl, surface, &rovl->config, left_lock );
      ovl_set_buffers( rdrv, rovl );
    
      if (flags & DSFLIP_WAIT)
           dfb_layer_wait_vsync( layer );
 
-     rovl->lock = lock;
+     rovl->lock = left_lock;
 
      return DFB_OK;
 }

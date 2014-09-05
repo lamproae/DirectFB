@@ -147,14 +147,15 @@ crtc1SetRegion( CoreLayer                  *layer,
                 CoreLayerRegionConfigFlags  updated,
                 CoreSurface                *surface,
                 CorePalette                *palette,
-                CoreSurfaceBufferLock      *lock )
+                CoreSurfaceBufferLock      *left_lock,
+                CoreSurfaceBufferLock      *right_lock )
 {
      
      if (updated & ~CLRCF_OPTIONS) {
           return OldPrimaryLayerFuncs.SetRegion( layer,
                                                  OldPrimaryLayerDriverData,
                                                  layer_data, region_data,
-                                                 config, updated, surface, palette, lock );
+                                                 config, updated, surface, palette, left_lock, right_lock );
      }
 
      return DFB_OK;
