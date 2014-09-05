@@ -87,7 +87,7 @@ DFBResult uc_ovl_update(UcDriverData* ucdrv,
                         CoreSurfaceBufferLock* lock)
 {
      int sw, sh, sp, sfmt;   // Source width, height, pitch and format
-     int dx, dy;             // Destination position
+     //int dx, dy;             // Destination position
      int dw, dh;             // Destination width and height
      VideoMode *videomode;
      DFBRectangle scr;       // Screen size
@@ -146,8 +146,8 @@ DFBResult uc_ovl_update(UcDriverData* ucdrv,
                return DFB_INVAREA;
           }
 
-          dx = ucovl->v1.win.x;
-          dy = ucovl->v1.win.y;
+          //dx = ucovl->v1.win.x;
+          //dy = ucovl->v1.win.y;
           dw = ucovl->v1.win.w;
           dh = ucovl->v1.win.h;
 

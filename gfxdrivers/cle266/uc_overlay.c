@@ -105,7 +105,8 @@ uc_ovl_set_region( CoreLayer                  *layer,
                    CoreLayerRegionConfigFlags  updated,
                    CoreSurface                *surface,
                    CorePalette                *palette,
-                   CoreSurfaceBufferLock      *lock )
+                   CoreSurfaceBufferLock      *left_lock,
+                   CoreSurfaceBufferLock      *right_lock )
 {
     UcDriverData*  ucdrv = (UcDriverData*) driver_data;
     UcOverlayData* ucovl = (UcOverlayData*) layer_data;
@@ -128,9 +129,9 @@ uc_ovl_set_region( CoreLayer                  *layer,
 
     ucovl->deinterlace = config->options & DLOP_DEINTERLACING;
     ucovl->surface     = surface;
-    ucovl->lock        = lock;
+    ucovl->lock        = left_lock;
 
-    return uc_ovl_update(ucdrv, ucovl, UC_OVL_CHANGE, surface, lock);
+    return uc_ovl_update(ucdrv, ucovl, UC_OVL_CHANGE, surface, left_lock);
 }
 
 
@@ -246,7 +247,7 @@ uc_ovl_flip_region( CoreLayer             *layer,
     dfb_surface_flip(surface, false);
 
     ucovl->field = 0;
-    ucovl->lock = lock;
+    ucovl->lock = left_lock;
 
     ret = uc_ovl_update(ucdrv, ucovl, UC_OVL_FLIP, surface, left_lock);
     if (ret)
