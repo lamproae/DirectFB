@@ -61,14 +61,16 @@ omapUpdateRegion( CoreLayer             *layer,
                   void                  *layer_data,
                   void                  *region_data,
                   CoreSurface           *surface,
-                  const DFBRegion       *update,
-                  CoreSurfaceBufferLock *lock )
+                  const DFBRegion       *left_update,
+                  CoreSurfaceBufferLock *left_lock,
+                  const DFBRegion       *right_update,
+                  CoreSurfaceBufferLock *right_lock )
 {
      FBDev *dfb_fbdev = dfb_system_data();
      struct omapfb_update_window window;
      DFBRectangle rect;
 
-     dfb_rectangle_from_region( &rect, update );
+     dfb_rectangle_from_region( &rect, left_update );
 
      D_DEBUG_AT( omap, "Update rectangle %d %d %dx%d\n",
                  rect.x, rect.y, rect.w, rect.h );
