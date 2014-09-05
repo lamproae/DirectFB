@@ -347,7 +347,8 @@ savageSecondarySetRegion( CoreLayer                  *layer,
                           CoreLayerRegionConfigFlags  updated,
                           CoreSurface                *surface,
                           CorePalette                *palette,
-                          CoreSurfaceBufferLock      *lock )
+                          CoreSurfaceBufferLock      *left_lock,
+                          CoreSurfaceBufferLock      *right_lock )
 {
      SavageDriverData *sdrv = (SavageDriverData*) driver_data;
      SavageSecondaryLayerData *slay = (SavageSecondaryLayerData*) layer_data;
@@ -374,7 +375,7 @@ savageSecondarySetRegion( CoreLayer                  *layer,
                break;
      }
 
-     secondary_calc_regs(sdrv, slay, layer, config, surface, lock);
+     secondary_calc_regs(sdrv, slay, layer, config, surface, left_lock);
 
      secondary_set_regs(sdrv, slay);
 
@@ -756,7 +757,8 @@ savagePrimarySetRegion( CoreLayer                  *layer,
                         CoreLayerRegionConfigFlags  updated,
                         CoreSurface                *surface,
                         CorePalette                *palette,
-                        CoreSurfaceBufferLock      *lock )
+                        CoreSurfaceBufferLock      *left_lock,
+                        CoreSurfaceBufferLock      *right_lock )
 {
      SavageDriverData *sdrv = (SavageDriverData*) driver_data;
      SavagePrimaryLayerData *play = (SavagePrimaryLayerData*) layer_data;
@@ -767,15 +769,15 @@ savagePrimarySetRegion( CoreLayer                  *layer,
             DFB_BYTES_PER_PIXEL(config->format) * 8);
 
      ret = savage_pfuncs.SetRegion(layer, driver_data, layer_data, region_data,
-                                   config, updated, surface, palette, lock);
+                                   config, updated, surface, palette, left_lock, right_lock);
      if (ret != DFB_OK)
           return ret;
 
      /* remember configuration */
      play->config = *config;
-     play->lock = lock;
+     play->lock = left_lock;
 
-     primary_calc_regs(sdrv, play, layer, config, surface, lock);
+     primary_calc_regs(sdrv, play, layer, config, surface, left_lock);
      primary_set_regs(sdrv, play);
 
      return DFB_OK;
