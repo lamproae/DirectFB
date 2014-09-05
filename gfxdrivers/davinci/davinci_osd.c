@@ -183,7 +183,8 @@ osdSetRegion( CoreLayer                  *layer,
               CoreLayerRegionConfigFlags  updated,
               CoreSurface                *surface,
               CorePalette                *palette,
-              CoreSurfaceBufferLock      *lock )
+              CoreSurfaceBufferLock      *left_lock,
+              CoreSurfaceBufferLock      *right_lock )
 {
      int                  ret;
      DavinciDriverData   *ddrv = driver_data;
@@ -311,7 +312,7 @@ osdSetRegion( CoreLayer                  *layer,
      }
 
      davincifb_pan_display( &ddrv->fb[OSD0], &dosd->var0,
-                            (config->format == DSPF_RGB16) ? lock : NULL, DSFLIP_NONE, 0, 0 );
+                            (config->format == DSPF_RGB16) ? left_lock : NULL, DSFLIP_NONE, 0, 0 );
 
      ret = ioctl( ddrv->fb[OSD0].fd, FBIOGET_FSCREENINFO, &ddev->fix[OSD0] );
      if (ret)
@@ -600,10 +601,10 @@ osdFlipRegion( CoreLayer             *layer,
                void                  *region_data,
                CoreSurface           *surface,
                DFBSurfaceFlipFlags    flags,
-               const DFBRegion * left_update,
-               CoreSurfaceBufferLock * left_lock,
-               const DFBRegion * right_update,
-               CoreSurfaceBufferLock * right_lock )
+               const DFBRegion       *left_update,
+               CoreSurfaceBufferLock *left_lock,
+               const DFBRegion       *right_update,
+               CoreSurfaceBufferLock *right_lock )
 {
      CoreSurfaceBuffer   *buffer;
      DavinciDriverData   *ddrv = driver_data;
@@ -622,9 +623,9 @@ osdFlipRegion( CoreLayer             *layer,
 
      if (buffer->format != DSPF_RGB16) {
           if (DFB_PIXELFORMAT_HAS_ALPHA( buffer->format ))
-               update_buffers( ddrv, ddev, surface, left_lock, NULL );
+               update_buffers( ddrv, ddev, surface, left_lock, left_update );
           else
-               update_rgb( ddrv, ddev, surface, left_lock, NULL );
+               update_rgb( ddrv, ddev, surface, left_lock, left_update );
      }
      else
           davincifb_pan_display( &ddrv->fb[OSD0], &dosd->var0, left_lock, flags, 0, 0 );
@@ -642,10 +643,10 @@ osdUpdateRegion( CoreLayer             *layer,
                  void                  *layer_data,
                  void                  *region_data,
                  CoreSurface           *surface,
-                 const DFBRegion * left_update,
-                 CoreSurfaceBufferLock * left_lock,
-                 const DFBRegion * right_update,
-                 CoreSurfaceBufferLock * right_lock )
+                 const DFBRegion       *left_update,
+                 CoreSurfaceBufferLock *left_lock,
+                 const DFBRegion       *right_update,
+                 CoreSurfaceBufferLock *right_lock )
 {
      CoreSurfaceBuffer   *buffer;
      DavinciDriverData   *ddrv = driver_data;

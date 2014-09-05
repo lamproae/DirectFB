@@ -136,7 +136,7 @@ static bool davinciBlitBlend32    ( void                *drv,
 static inline int
 get_blit_blend_sub_function( const CardState *state )
 {
-     DFBSurfaceBlittingFlags flags = state->blittingflags & ~DSBLIT_COLORIZE;
+     unsigned int flags = state->blittingflags & ~DSBLIT_COLORIZE;
 
      if (state->dst_blend == DSBF_INVSRCALPHA) {
           switch (state->src_blend) {
@@ -175,7 +175,7 @@ get_blit_blend_sub_function( const CardState *state )
 static inline int
 get_draw_blend_sub_function( const CardState *state )
 {
-     DFBSurfaceDrawingFlags flags = state->drawingflags;
+     unsigned int flags = state->drawingflags;
 
      if (state->dst_blend == DSBF_INVSRCALPHA) {
           switch (state->src_blend) {
@@ -446,7 +446,7 @@ void
 davinciFlushTextureCache( void *drv, void *dev )
 {
      DavinciDriverData *ddrv = drv;
-     DavinciDeviceData *ddev = dev;
+     //DavinciDeviceData *ddev = dev;
 
      D_DEBUG_AT( Davinci_2D, "%s()\n", __FUNCTION__ );
 

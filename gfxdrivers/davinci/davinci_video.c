@@ -193,7 +193,8 @@ videoSetRegion( CoreLayer                  *layer,
                 CoreLayerRegionConfigFlags  updated,
                 CoreSurface                *surface,
                 CorePalette                *palette,
-                CoreSurfaceBufferLock      *lock )
+                CoreSurfaceBufferLock      *left_lock,
+                CoreSurfaceBufferLock      *right_lock )
 {
      int                    ret;
      DavinciDriverData     *ddrv = driver_data;
@@ -236,7 +237,7 @@ videoSetRegion( CoreLayer                  *layer,
           dvid->var.xres = config->dest.w;
           dvid->var.yres = config->dest.h;
 
-          dvid->var.yres_virtual = ddrv->fb[VID1].size / lock->pitch;
+          dvid->var.yres_virtual = ddrv->fb[VID1].size / left_lock->pitch;
 
           ret = ioctl( ddrv->fb[VID1].fd, FBIOPUT_VSCREENINFO, &dvid->var );
           if (ret)
@@ -343,10 +344,10 @@ videoFlipRegion( CoreLayer             *layer,
                  void                  *region_data,
                  CoreSurface           *surface,
                  DFBSurfaceFlipFlags    flags,
-                 const DFBRegion * left_update,
-                 CoreSurfaceBufferLock * left_lock,
-                 const DFBRegion * right_update,
-                 CoreSurfaceBufferLock * right_lock )
+                 const DFBRegion       *left_update,
+                 CoreSurfaceBufferLock *left_lock,
+                 const DFBRegion       *right_update,
+                 CoreSurfaceBufferLock *right_lock )
 {
      DFBResult              ret;
      DavinciDriverData     *ddrv = driver_data;
@@ -375,10 +376,10 @@ videoUpdateRegion( CoreLayer             *layer,
                    void                  *layer_data,
                    void                  *region_data,
                    CoreSurface           *surface,
-                   const DFBRegion * left_update,
-                   CoreSurfaceBufferLock * left_lock,
-                   const DFBRegion * right_update,
-                   CoreSurfaceBufferLock * right_lock )
+                   const DFBRegion       *left_update,
+                   CoreSurfaceBufferLock *left_lock,
+                   const DFBRegion       *right_update,
+                   CoreSurfaceBufferLock *right_lock )
 {
      DavinciDriverData     *ddrv = driver_data;
      DavinciVideoLayerData *dvid = layer_data;
@@ -518,10 +519,10 @@ ShowBuffer( DavinciDriverData     *ddrv,
 static int
 limitInput(int rsz,int inSize,int outSize,int* pInSize)
 {
-     int phases;
+     //int phases;
      int phaseShift;
      int taps;
-     int phaseMask;
+     //int phaseMask;
      int coarseShift;
      int halfCoarse;
      int tmp;
@@ -537,8 +538,8 @@ limitInput(int rsz,int inSize,int outSize,int* pInSize)
                phaseShift = 2;
                taps = 7;
           }
-          phases = 1<<phaseShift;
-          phaseMask = phases-1;
+          //phases = 1<<phaseShift;
+          //phaseMask = phases-1;
           coarseShift = (8-phaseShift);
           halfCoarse = (1<<(coarseShift-1));
           tmp = (((outSize-1)* rsz + halfCoarse)>>8) + taps;
