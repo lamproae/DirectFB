@@ -460,8 +460,10 @@ sh7722UpdateRegion( CoreLayer             *layer,
                     void                  *layer_data,
                     void                  *region_data,
                     CoreSurface           *surface,
-                    const DFBRegion       *update,
-                    CoreSurfaceBufferLock *lock )
+                    const DFBRegion       *left_update,
+                    CoreSurfaceBufferLock *left_lock,
+                    const DFBRegion       *right_update,
+                    CoreSurfaceBufferLock *right_lock )
 {
      SH7722DriverData *sdrv = driver_data;
      SH7722DeviceData *sdev = sdrv->dev;
