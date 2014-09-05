@@ -143,12 +143,13 @@ uc_spic_set_region( CoreLayer                  *layer,
                     CoreLayerRegionConfigFlags  updated,
                     CoreSurface                *surface,
                     CorePalette                *palette,
-                    CoreSurfaceBufferLock      *lock )
+                    CoreSurfaceBufferLock      *left_lock,
+                    CoreSurfaceBufferLock      *right_lock )
 {
     UcDriverData*  ucdrv = (UcDriverData*) driver_data;
 
     uc_spic_set_palette(ucdrv->hwregs, palette);
-    uc_spic_set_buffer(ucdrv->hwregs, lock);
+    uc_spic_set_buffer(ucdrv->hwregs, left_lock);
     uc_spic_enable(ucdrv->hwregs, (config->opacity > 0));
 
     return DFB_OK;
@@ -173,12 +174,15 @@ uc_spic_flip_region( CoreLayer             *layer,
                      void                  *region_data,
                      CoreSurface           *surface,
                      DFBSurfaceFlipFlags    flags,
-                     CoreSurfaceBufferLock *lock )
+                     const DFBRegion       *left_update,
+                     CoreSurfaceBufferLock *left_lock,
+                     const DFBRegion       *right_update,
+                     CoreSurfaceBufferLock *right_lock )
 {
     UcDriverData*  ucdrv = (UcDriverData*) driver_data;
 
     dfb_surface_flip(surface, false);
-    uc_spic_set_buffer(ucdrv->hwregs, lock);
+    uc_spic_set_buffer(ucdrv->hwregs, left_lock);
 
     return DFB_OK;
 }
