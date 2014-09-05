@@ -162,7 +162,8 @@ udlSetRegion( CoreLayer                  *layer,
               CoreLayerRegionConfigFlags  updated,
               CoreSurface                *surface,
               CorePalette                *palette,
-              CoreSurfaceBufferLock      *lock )
+              CoreSurfaceBufferLock      *left_lock,
+              CoreSurfaceBufferLock      *right_lock )
 {
      CyberDriverData        *cdrv = (CyberDriverData*) driver_data;
      CyberUnderlayLayerData *cudl = (CyberUnderlayLayerData*) layer_data;
@@ -171,7 +172,7 @@ udlSetRegion( CoreLayer                  *layer,
      cudl->config = *config;
 
      /* set up layer */
-     udl_set_all( cdrv, cudl, config, surface, lock );
+     udl_set_all( cdrv, cudl, config, surface, left_lock );
 
      return DFB_OK;
 }

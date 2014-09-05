@@ -640,7 +640,8 @@ osdSetRegion( CoreLayer                  *layer,
               CoreLayerRegionConfigFlags  updated,
               CoreSurface                *surface,
               CorePalette                *palette,
-              CoreSurfaceBufferLock      *lock )
+              CoreSurfaceBufferLock      *left_lock,
+              CoreSurfaceBufferLock      *right_lock )
 {
      DFBResult ret;
 
@@ -648,7 +649,7 @@ osdSetRegion( CoreLayer                  *layer,
      ret = oldPrimaryFuncs.SetRegion( layer, oldPrimaryDriverData,
                                       layer_data, region_data,
                                       config, updated, surface,
-                                      palette, lock );
+                                      palette, left_lock, right_lock );
      if (ret)
           return ret;
 
