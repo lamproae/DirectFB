@@ -41,7 +41,6 @@ lxcInitLayer(
      DFBDisplayLayerConfig * config,
      DFBColorAdjustment * adjustment )
 {
-     //LXCDriverData *lxc_drv = driver_data;
      LXCLayerData *lxc_layer = layer_data;
      struct sockaddr_un remote;
 
@@ -79,7 +78,7 @@ lxcInitLayer(
       * set name 
       */
      snprintf( description->name, DFB_DISPLAY_LAYER_DESC_NAME_LENGTH,
-               "lxc Primary Layer" );
+               "Primary layer for LXC" );
 
      /*
       * fill out the default configuration 
@@ -88,6 +87,9 @@ lxcInitLayer(
          DLCONF_WIDTH | DLCONF_HEIGHT | DLCONF_PIXELFORMAT | DLCONF_BUFFERMODE |
          DLCONF_OPTIONS;
 
+     /*
+      * for now we are hardccoding our layer parameters
+      */
      config->width = XRESOLUTION;
      config->height = YRESOLUTION;
      config->pixelformat = DSPF_RGB16;
@@ -103,11 +105,11 @@ lxcShutdownLayer(
      void *driver_data,
      void *layer_data )
 {
-     //LXCDriverData *lxc_drv = driver_data;
      LXCLayerData *lxc_layer = layer_data;
 
      if ( lxc_layer->socket_to_host != -1 ) {
           close( lxc_layer->socket_to_host );
+          lxc_layer->socket_to_host = -1;
      }
 
      return DFB_OK;
@@ -142,6 +144,10 @@ update_rgb(
           rect.h = surface->config.size.h;
      }
 
+     /*
+      * We need to convert the pixel format to RGB16 so that the
+      * host doesn't have to guess.
+      */
      dfb_convert_to_rgb16( buffer->format,
                            lock->addr + rect.y * lock->pitch +
                            DFB_BYTES_PER_LINE( buffer->format, rect.x ),
@@ -172,15 +178,32 @@ lxcTestRegion(
      }
 
      switch ( config->format ) {
-     case DSPF_ARGB:
-     case DSPF_RGB32:
+          /*
+           * We accept all kinds of pixel formats (the ones supported by
+           * dfb_convert_to_rgb16()) but we will have to convert
+           * them to RGB16 later.
+           */
+     case DSPF_RGB16:
+     case DSPF_NV16:
+     case DSPF_UYVY:
+     case DSPF_RGB444:
+     case DSPF_ARGB4444:
+     case DSPF_RGBA4444:
      case DSPF_RGB555:
      case DSPF_ARGB1555:
-     case DSPF_RGB16:
+     case DSPF_BGR555:
+     case DSPF_RGB32:
+     case DSPF_ARGB:
+     case DSPF_ABGR:
+     case DSPF_RGBAF88871:
+     case DSPF_AYUV:
+     case DSPF_AVYU:
+     case DSPF_VYU:
      case DSPF_YUY2:
-     case DSPF_UYVY:
-     case DSPF_I420:
-     case DSPF_YV12:
+     case DSPF_RGBA5551:
+     case DSPF_YUV444P:
+     case DSPF_ARGB8565:
+     case DSPF_YV16:
           break;
 
      default:
@@ -213,17 +236,6 @@ lxcTestRegion(
 }
 
 static DFBResult
-lxcAddRegion(
-     CoreLayer * layer,
-     void *driver_data,
-     void *layer_data,
-     void *region_data,
-     CoreLayerRegionConfig * config )
-{
-     return DFB_OK;
-}
-
-static DFBResult
 lxcSetRegion(
      CoreLayer * layer,
      void *driver_data,
@@ -236,16 +248,9 @@ lxcSetRegion(
      CoreSurfaceBufferLock * left_lock,
      CoreSurfaceBufferLock * right_lock )
 {
-     return DFB_OK;
-}
-
-static DFBResult
-lxcRemoveRegion(
-     CoreLayer * layer,
-     void *driver_data,
-     void *layer_data,
-     void *region_data )
-{
+     /*
+      * nothing to do in SetRegion
+      */
      return DFB_OK;
 }
 
@@ -316,6 +321,11 @@ lxcUpdateRegion(
           update_rgb( ddrv, ddev, surface, left_lock, left_update );
      }
 
+     /*
+      * we tell the host that the layer is updated
+      * The host uses this layer as a surface before sending it to the
+      * final (real) layer (fb, X11, SDL,...).
+      */
      if ( lxc_layer->socket_to_host != -1 ) {
           char flags = 1;
           int ret =
@@ -336,9 +346,7 @@ const DisplayLayerFuncs lxcLayerFuncs = {
      .ShutdownLayer = lxcShutdownLayer,
 
      .TestRegion = lxcTestRegion,
-     .AddRegion = lxcAddRegion,
      .SetRegion = lxcSetRegion,
-     .RemoveRegion = lxcRemoveRegion,
      .FlipRegion = lxcFlipRegion,
      .UpdateRegion = lxcUpdateRegion,
 };

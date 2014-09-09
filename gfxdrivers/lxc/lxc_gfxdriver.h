@@ -51,8 +51,8 @@ typedef struct {
 
         /** Add local data here... **/
 #endif
-     LXCDeviceData        *ddev;
-     CoreDFB                  *core;
+     LXCDeviceData *ddev;
+     CoreDFB *core;
      CoreScreen *screen;
      CoreLayer *layer;
 

@@ -30,7 +30,8 @@ lxcInitScreen(
      /*
       * Set the screen name. 
       */
-     snprintf( description->name, DFB_SCREEN_DESC_NAME_LENGTH, "LXC Screen" );
+     snprintf( description->name, DFB_SCREEN_DESC_NAME_LENGTH,
+               "Screen for LXC" );
 
      description->mixers = 0;   /* no mixers */
      description->encoders = 0; /* no encoders */

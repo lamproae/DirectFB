@@ -27,9 +27,9 @@ driver_get_info(
      /*
       * fill driver info structure 
       */
-     snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "lxc Driver" );
-
      snprintf( info->vendor, DFB_GRAPHICS_DRIVER_INFO_VENDOR_LENGTH, "lxc" );
+     snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH,
+               "Driver for LXC" );
 
      info->version.major = 0;
      info->version.minor = 0;
@@ -79,7 +79,7 @@ driver_init_device(
      snprintf( device_info->vendor, DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH,
                "lxc" );
      snprintf( device_info->name, DFB_GRAPHICS_DEVICE_INFO_NAME_LENGTH,
-               "Blitter for LXC container" );
+               "Device for LXC" );
 
      /*
       * device limitations 
